@@ -12,7 +12,7 @@ sealed trait Option[+A] {
   /**
   Optionの持つ値を別の値へと変更します。
   OptionがNoneの場合、変更は実施されずNoneが返されます。
-  
+
   mapと異なる点は、持っている値から新しいOptionを生成する点です。
   よって、持っている値の変更結果がOptionになる関数を引数として与える場合、Optionの持つ値が
   Optionになってしまうという２重構造のOptionの生成を防ぐことが可能です。
@@ -55,5 +55,22 @@ object Option {
       case Nil => Some(Nil)
       case h :: t => h flatMap (hh => sequence(t) map (hh :: _))
     }
+
+  // 特定の型から特定の型への変換を試みる
+  def Try[A](a: => A): Option[A] =
+    try Some(a)
+    catch { case e: Exception => None }
+
+  def parseInts(a: List[String]): Option[List[Int]] =
+    sequence(a map (i => Try(i.toInt)))
+
+  /**
+  リストが持つ値を特定の値へと変更する。
+  値の変更において、例外が発生した場合戻り値はNoneとなる。
+  */
+  def traverse[A, B](a: List[A])(f: A => Option[B]): Option[List[B]] = a match {
+    case Nil => Some(Nil)
+    case h :: t => f(h) flatMap (hh => traverse(t)(f) map (hh :: _))
+  }
 
 }
