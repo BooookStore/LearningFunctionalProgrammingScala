@@ -37,7 +37,7 @@ object Either {
     else
       Right(xs.sum / xs.length)
 
-  /*
+  /**
   リストに格納された値を特定の値へと変更する。
   リストに格納されているすべての値の変換が成功すれば、変換後の値をリストとして保持するRight型を
   返す。
@@ -47,12 +47,21 @@ object Either {
     es match {
       case Nil => Right(Nil)
 
-      // 現在のリストのヘッド値を関数fによって変換
-      // 後続のリストの値を再帰呼び出しにより変換
-      // これら２つの値をmap2関数によってリスト化
+      // 現在のリストのヘッド値を関数fによってEither型に変換。
+      // 後続のリストの値を再帰呼び出しによりEither型に変換。
+      // これら２つの値をmap2関数によってリスト化。
       case h::t => (f(h) map2 traverse(t)(f))(_ :: _)
     }
 
+  /**
+  Eitherを持つリストから、リストをもつEitherへと変換する。
+　引数のリストが持っているEitherから値を取得できない場合、エラー原因情報を持つEitherを返す。
+
+  @param es Eitherを持つリスト
+  @return 変換に成功した場合はリストを持つが、失敗した場合にはエラー原因情報を持つEither
+
+  @see traverse
+  */
   def sequence[E, A](es: List[Either[E, A]]): Either[E, List[A]] =
     traverse(es)(x => x)
 
