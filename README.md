@@ -15,3 +15,12 @@ Scala Demo
 
 - **language** <br>
 プログラミング言語Scalaに関するコード
+
+## How to build
+
+Simple Build Tool を利用してソースコードをコンパイルできます。コンパイル方法は以下のコマンドを入力します。
+```shell:
+sbt compile
+```
+
+Simple Build Tool については[こちら](http://www.scala-sbt.org/0.13/docs/index.html)を参考しました。
