@@ -10,3 +10,15 @@ lazy val language = (project in file("language"))
     name := "Language",
     libraryDependencies += scalaTest % Test
   )
+
+lazy val errorhandling = (project in file("errorhandling"))
+  .settings(commonSettings)
+  .settings(
+    name := "errorhandling"
+  )
+
+lazy val datastructure = (project in file("datastructure"))
+  .settings(commonSettings)
+  .settings(
+    name := "datastructure"
+  )
