@@ -22,3 +22,9 @@ lazy val datastructure = (project in file("datastructure"))
   .settings(
     name := "datastructure"
   )
+
+lazy val nonstrictfunction = (project in file("nonStrictFunction"))
+  .settings(commonSettings)
+  .settings(
+    name := "nonstrictfunction"
+  )
