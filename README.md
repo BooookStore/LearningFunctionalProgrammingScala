@@ -1,4 +1,4 @@
-Scala Demo
+Learning Functional Programming Scala
 ==========
 
 ## Overview
