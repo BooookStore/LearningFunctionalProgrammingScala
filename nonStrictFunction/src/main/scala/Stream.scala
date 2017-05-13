@@ -1,4 +1,9 @@
-import Stream._
+import Stream._ // 自分自身をインポートすることで、定義の順序に依存せずに、各オブジェクト、関数等が利用可能
+
+/**
+ * 遅延評価に関する操作を表すトレイト。ケースクラスとしてConsクラスが実装を持っている。
+ * 更に詳しい内容についてはコンパニオンオブジェクトを参照。
+ */
 sealed trait Stream[+A] {
 
   /**
@@ -18,10 +23,10 @@ sealed trait Stream[+A] {
   }
 
   /**
-  先頭からn個をStreamとして返す。
-  */
+   * 先頭からn個をStreamとして返す。
+   */
   def take(n: Int): Stream[A] = this match {
-    case Cons(h, t) if n > 1 => cons(h(), t().take(n-1))
+    case Cons(h, t) if n > 1 => cons(h(), t().take(n - 1))
     case Cons(h, _) if n == 1 => cons(h(), empty)
     case _ => empty
   }
@@ -29,8 +34,17 @@ sealed trait Stream[+A] {
 }
 
 case object Empty extends Stream[Nothing]
+
+/**
+* Streamを実装した、遅延評価を行うケースクラス。引数として与えられたhと、他のStreamを表すtを
+* 持つ。これら２つの引数の評価は必ず１回のみとなる。そのため、評価に時間がかかるものを処理するのに
+* 適している。
+*/
 case class Cons[+A](h: () => A, t: () => Stream[A]) extends Stream[A]
 
+/**
+ *
+ */
 object Stream {
 
   /**
