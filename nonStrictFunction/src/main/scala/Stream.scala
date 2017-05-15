@@ -31,23 +31,48 @@ sealed trait Stream[+A] {
     case _ => empty
   }
 
+  /**
+   * 先頭から順にpを適用し、Falseとなった時、それまでの A を Stream として返す。
+   */
+  def takeWhile(p: A => Boolean): Stream[A] = this match {
+    case Cons(h, t) if (p(h())) => cons(h(), t() takeWhile p)
+    case _ => empty
+  }
+
+  /**
+   * 関数 f の第２引数は名前優先（必要とされた場合評価される）のため、第一引数で戻り値が決定した場合、
+   * Streamの全ての値は評価されない。
+   */
+  def foldRight[B](z: => B)(f: (A, => B) => B): B =
+    this match {
+      case Cons(h, t) => f(h(), t().foldRight(z)(f))
+      case _ => z
+    }
+
+  def exist(p: A => Boolean): Boolean =
+    foldRight(false)((a, b) => p(a) || b)
+
 }
 
+/**
+ * Streamが空であることを表現する。
+ */
 case object Empty extends Stream[Nothing]
 
 /**
-* Streamを実装した、遅延評価を行うケースクラス。引数として与えられたhと、他のStreamを表すtを
-* 持つ。これら２つの引数の評価は必ず１回のみとなる。そのため、評価に時間がかかるものを処理するのに
-* 適している。
-*/
+ * Streamを実装した、遅延評価を行うケースクラス。２つの引数の評価は必ず１回のみとなる。
+ * そのため、評価に時間がかかるものを処理するのに適している。
+ */
 case class Cons[+A](h: () => A, t: () => Stream[A]) extends Stream[A]
 
 /**
- *
+ * Streamトレイとのコンパニオンオブジェクト。
  */
 object Stream {
 
   /**
+   * Consクラスを新しく生成する。２つの引数は一度評価され、その後Consクラスにセットされる。
+   *
    * [MEMO] 未評価の引数は thunk と呼ばれる。
    */
   def cons[A](hd: => A, t1: => Stream[A]): Stream[A] = {
