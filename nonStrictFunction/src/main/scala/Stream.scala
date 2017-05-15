@@ -52,6 +52,9 @@ sealed trait Stream[+A] {
   def exist(p: A => Boolean): Boolean =
     foldRight(false)((a, b) => p(a) || b)
 
+  def forAll(p: A => Boolean): Boolean =
+    foldRight(true)((a, b) => p(a) && b)
+
 }
 
 /**
