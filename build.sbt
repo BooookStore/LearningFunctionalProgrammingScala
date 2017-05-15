@@ -8,7 +8,7 @@ val commonSettings = Seq(
 lazy val language = (project in file("language"))
   .settings(commonSettings)
   .settings(
-    name := "Language",
+    name := "Language"
   )
 
 lazy val errorhandling = (project in file("errorhandling"))
