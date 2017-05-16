@@ -24,4 +24,8 @@ class StreamSpec extends FlatSpec with Matchers {
   "Stream.append method" should "ストリームの最後に要素を追加する" in {
     Stream(1,2,3).append(Stream(4,5,6)).toList should be (List(1,2,3,4,5,6))
   }
+
+  "Stream.flatMap method" should "与えられた関数によって、ストリーム全体をマップ" in {
+    Stream(1,2,3).flatMap((a) => Stream(a,a)).toList should be (List(1,1,2,2,3,3))
+  }
 }
