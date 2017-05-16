@@ -61,6 +61,15 @@ sealed trait Stream[+A] {
   def takeWhileByFoldRight(p: A => Boolean): Stream[A] =
     foldRight(Empty: Stream[A])((a,b) => if (p(a)) cons(a,b) else empty)
 
+  def map[B](f: A => B): Stream[B] =
+    foldRight(empty: Stream[B])((a,b) => cons(f(a),b))
+
+  def filter(f: A => Boolean): Stream[A] =
+    foldRight(empty: Stream[A])((a,b) => if(f(a)) cons(a,b) else b)
+
+  def append[B >: A](m: => Stream[B]): Stream[B] =
+    foldRight(m)((a,b) => cons(a,b))
+
 }
 
 /**

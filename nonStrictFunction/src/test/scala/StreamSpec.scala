@@ -13,4 +13,15 @@ class StreamSpec extends FlatSpec with Matchers {
     Stream(1,2,3,4).takeWhileByFoldRight(_ <= 4).toList should be (List(1,2,3,4))
   }
 
+  "Stream.map method" should "全ての値を変換する" in {
+    Stream(1,2,3).map(_.toString).toList should be (Stream("1","2","3").toList)
+  }
+
+  "Stream.filter method" should "全ての値に対してフィルタリングを行う" in {
+    Stream(1,2,3,4,5,6,7,8,9,10).filter(_ % 2 == 0).toList should be (List(2,4,6,8,10))
+  }
+
+  "Stream.append method" should "ストリームの最後に要素を追加する" in {
+    Stream(1,2,3).append(Stream(4,5,6)).toList should be (List(1,2,3,4,5,6))
+  }
 }
