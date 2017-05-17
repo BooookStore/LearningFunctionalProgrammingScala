@@ -28,4 +28,13 @@ class StreamSpec extends FlatSpec with Matchers {
   "Stream.flatMap method" should "与えられた関数によって、ストリーム全体をマップ" in {
     Stream(1,2,3).flatMap((a) => Stream(a,a)).toList should be (List(1,1,2,2,3,3))
   }
+
+  "Stream.constant" should "与えられた値で無限配列を作成" in {
+    Stream.constant(1).take(5).toList should be (List(1,1,1,1,1).toList)
+  }
+
+  "Stream.from" should "与えられた値から１ずつ増加する無限配列を作成" in {
+    Stream.from(5).take(5).toList should be (List(5,6,7,8,9).toList)
+  }
+
 }

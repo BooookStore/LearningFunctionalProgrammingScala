@@ -56,22 +56,22 @@ sealed trait Stream[+A] {
     foldRight(true)((a, b) => p(a) && b)
 
   /**
-  * takeWhile を foldRight を使用して実装。
-  */
+   * takeWhile を foldRight を使用して実装。
+   */
   def takeWhileByFoldRight(p: A => Boolean): Stream[A] =
-    foldRight(Empty: Stream[A])((a,b) => if (p(a)) cons(a,b) else empty)
+    foldRight(Empty: Stream[A])((a, b) => if (p(a)) cons(a, b) else empty)
 
   def map[B](f: A => B): Stream[B] =
-    foldRight(empty: Stream[B])((a,b) => cons(f(a),b))
+    foldRight(empty: Stream[B])((a, b) => cons(f(a), b))
 
   def filter(f: A => Boolean): Stream[A] =
-    foldRight(empty: Stream[A])((a,b) => if(f(a)) cons(a,b) else b)
+    foldRight(empty: Stream[A])((a, b) => if (f(a)) cons(a, b) else b)
 
   def append[B >: A](m: => Stream[B]): Stream[B] =
-    foldRight(m)((a,b) => cons(a,b))
+    foldRight(m)((a, b) => cons(a, b))
 
   def flatMap[B >: A](f: A => Stream[B]): Stream[B] =
-    foldRight(empty[B])((a,b) => f(a) append b)
+    foldRight(empty[B])((a, b) => f(a) append b)
 
 }
 
@@ -106,5 +106,28 @@ object Stream {
 
   def apply[A](as: A*): Stream[A] =
     if (as.isEmpty) empty else cons(as.head, apply(as.tail: _*))
+
+  /**
+  * aの値をもつ無限ストリームを返す
+  * 例： constant(1) == [1,1,1,1,...]
+  */
+  def constant[A](a: A): Stream[A] =
+    Stream.cons(a, constant(a))
+
+  /**
+  * nから始まり、１づつ増加する値を表す無限ストリームを返す
+  * 例： from(3) -> [3,4,5,6,7,...]
+  */
+  def from(n: Int): Stream[Int] =
+    Stream.cons(n, from(n + 1))
+
+  /**
+   * フィボナッチ数列を表す無限ストリームを返す
+   */
+  def fibs = {
+    def go(f0: Int, f1: Int): Stream[Int] =
+      cons(f0, go(f1, f0 + f1))
+    go(0, 1)
+  }
 
 }
