@@ -130,4 +130,13 @@ object Stream {
     go(0, 1)
   }
 
+  /**
+  * 無限ストリームを作成する。zは初期状態を表し、述語fによって次の値が決定される。
+  */
+  def unfold[A, S](z: S)(f: S => Option[(A, S)]): Stream[A] = f(z) match {
+    case Some((h,s)) => cons(h, unfold(s)(f))
+    case None => empty
+  }
+
+
 }
