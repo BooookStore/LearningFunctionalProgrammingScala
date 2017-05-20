@@ -77,6 +77,11 @@ sealed trait Stream[+A] {
   def flatMap[B >: A](f: A => Stream[B]): Stream[B] =
     foldRight(empty[B])((a, b) => f(a) append b)
 
+  def mapByUnfold[B](f: A => B): Stream[B] =
+    unfold(this) {
+      case Cons(h, t) => Some(f(h()), t())
+      case Empty => None
+    }
 }
 
 /**
