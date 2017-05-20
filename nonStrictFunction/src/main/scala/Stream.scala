@@ -144,4 +144,23 @@ object Stream {
     case None => empty
   }
 
+  /**
+   * フィボナッチ数列を表すストリームを返す。unfoldを使用して実装。
+   */
+  def fibsByUnfold = unfold((0, 1))((p) => {
+    val value = p._1 + p._2
+    val next = (p._2, value)
+    Some(value, next)
+  })
+
+  /**
+   * fromをunfoldを使用して実装。
+   */
+  def fromByUnfold(n: Int): Stream[Int] = unfold(n)((p) => Some(p, p + 1))
+
+  /**
+   * constantをunfoldを使用して実装。
+   */
+  def constantByUnfold(n: Int): Stream[Int] = unfold(n)((p) => Some(p, p))
+
 }
