@@ -1,3 +1,7 @@
+/*
+ * 遅延評価を行う機能を提供する。
+ */
+
 import Stream._ // 自分自身をインポートすることで、定義の順序に依存せずに、各オブジェクト、関数等が利用可能
 
 /**
@@ -108,16 +112,16 @@ object Stream {
     if (as.isEmpty) empty else cons(as.head, apply(as.tail: _*))
 
   /**
-  * aの値をもつ無限ストリームを返す
-  * 例： constant(1) == [1,1,1,1,...]
-  */
+   * aの値をもつ無限ストリームを返す
+   * 例： constant(1) == [1,1,1,1,...]
+   */
   def constant[A](a: A): Stream[A] =
     Stream.cons(a, constant(a))
 
   /**
-  * nから始まり、１づつ増加する値を表す無限ストリームを返す
-  * 例： from(3) -> [3,4,5,6,7,...]
-  */
+   * nから始まり、１づつ増加する値を表す無限ストリームを返す
+   * 例： from(3) -> [3,4,5,6,7,...]
+   */
   def from(n: Int): Stream[Int] =
     Stream.cons(n, from(n + 1))
 
@@ -131,12 +135,13 @@ object Stream {
   }
 
   /**
-  * 無限ストリームを作成する。zは初期状態を表し、述語fによって次の値が決定される。
-  */
+   * 無限ストリームを作成する。zはストリームの先頭要素を表し、述語fによって次の値が決定される。
+   * 熟語fが返す値Option[(A, S)]の、Aはストリームの値である。
+   * 一方SはAの次の要素を決定する為に述語fの引数として使用される。
+   */
   def unfold[A, S](z: S)(f: S => Option[(A, S)]): Stream[A] = f(z) match {
-    case Some((h,s)) => cons(h, unfold(s)(f))
+    case Some((h, s)) => cons(h, unfold(s)(f))
     case None => empty
   }
-
 
 }
