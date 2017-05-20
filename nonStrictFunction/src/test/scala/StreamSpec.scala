@@ -37,4 +37,8 @@ class StreamSpec extends FlatSpec with Matchers {
     Stream.from(5).take(5).toList should be (List(5,6,7,8,9).toList)
   }
 
+  "Stream.zipWith" should "二つのストリームから新たなストリームを作成" in {
+    Stream(1,2,3).zipWith(Stream(1,2,3))((a,b) => a + b).toList should be (List(2,4,6))
+  }
+
 }
