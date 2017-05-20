@@ -82,6 +82,20 @@ sealed trait Stream[+A] {
       case Cons(h, t) => Some(f(h()), t())
       case Empty => None
     }
+
+  def takeByUnfold(i: Int): Stream[A] =
+    unfold((this, i)) {
+      case (Cons(h, t), 1) => Some(h(), (empty, 0))
+      case (Cons(h, t), n) if n > 0 => Some((h(), (t(), n -1)))
+      case _ => None
+    }
+
+  def takeWhileByUnfold(f: A => Boolean): Stream[A] =
+    unfold((this)) {
+      case Cons(h, t) if f(h()) => Some(h(), t())
+      case _ => None
+    }
+
 }
 
 /**
