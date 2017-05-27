@@ -102,17 +102,42 @@ sealed trait Stream[+A] {
       case _ => None
     }
 
-  /**
-   */
   def zipAll[B](s: Stream[B]): Stream[(Option[A], Option[B])] =
-    zipWithAll(s)((_,_))
+    zipWithAll(s)((_, _))
 
-  def zipWithAll[B, C](s2: Stream[B])(f: (Option[A],Option[B]) => C): Stream[C] =
-    Stream.unfold((this,s2)) {
+  def zipWithAll[B, C](s2: Stream[B])(f: (Option[A], Option[B]) => C): Stream[C] =
+    Stream.unfold((this, s2)) {
       case (Empty, Empty) => None
       case (Cons(h, t), Empty) => Some(f(Some(h()), Option.empty[B]) -> (t(), empty[B]))
       case (Empty, Cons(h, t)) => Some(f(Option.empty[A], Some(h())) -> (empty[A], t()))
-      case (Cons(h1, t1), Cons(h2, t2)) => Some(f(Some(h1()),Some(h2())) -> (t1(), t2()))
+      case (Cons(h1, t1), Cons(h2, t2)) => Some(f(Some(h1()), Some(h2())) -> (t1(), t2()))
+    }
+
+  /**
+  * 与えられたStreamを一部または全体として保持しているかどうかを返します。
+  * 例: Stream(1,2,3).hasSubsequence(Stream(1,2,3)) = true
+  *    Stream(1,2,3,4).hasSubsequence(Stream(2,3)) = true
+  *    Stream(1,2,3).hasSubsequence(Stream(3,4,5)) = false
+  */
+  // def hasSubsequence[B >: A](s2: Stream[B]): Boolean =
+
+  /**
+   * 与えられたストリームの要素で、自身のストリームが始まっているかを返す。
+   *
+   * 例：Stream(1,2,3,4).startsWith(Stream(1,2,3)) == true
+   *    Stream(1,2,3,4).startsWith(Stream(2,3,4)) == false
+   *
+   * 動作手順
+   * 1. 与えられたストリームをzipAllで自身の要素とタプル値にする。
+   *     [1,2,3] zipAll [1,2] -> [(1,1),(2,2),(3,empty)]
+   * 2.takeWhileでタプル値の２番目の要素までのストリームを得る。
+   *     [(1,1),(2,2),(3,empty)] takeWhile(...) -> [(1,1),(2,2)]
+   * 3.forAllで、タプル値の要素が同値かどうかを返す。
+   *     [(1,1),(2,2)] forAll {...} -> true
+   */
+  def startsWith[A](s: Stream[A]): Boolean =
+    zipAll(s).takeWhile(!_._2.isEmpty) forAll {
+      case(h,h2) => h == h2
     }
 
 }
