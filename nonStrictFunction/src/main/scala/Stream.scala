@@ -120,7 +120,7 @@ sealed trait Stream[+A] {
   }
 
   def exists(p: A => Boolean): Boolean =
-    foldRight(false)((a, b) => p(a) || b) 
+    foldRight(false)((a, b) => p(a) || b)
 
   /**
    * 与えられたストリームの要素で、自身のストリームが始まっているかを返す。
@@ -171,6 +171,9 @@ sealed trait Stream[+A] {
    */
   def hasSubsequence[B >: A](s2: Stream[B]): Boolean =
     tails exists (_ startsWith s2)
+
+  def scanRight[B](rv: B)(f: (A, => B) => B): Stream[B] =
+    this.tails.map((x) => x.foldRight(rv)(f))
 }
 
 /**
