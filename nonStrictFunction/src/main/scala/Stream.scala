@@ -113,13 +113,14 @@ sealed trait Stream[+A] {
       case (Cons(h1, t1), Cons(h2, t2)) => Some(f(Some(h1()), Some(h2())) -> (t1(), t2()))
     }
 
-  /**
-  * 与えられたStreamを一部または全体として保持しているかどうかを返します。
-  * 例: Stream(1,2,3).hasSubsequence(Stream(1,2,3)) = true
-  *    Stream(1,2,3,4).hasSubsequence(Stream(2,3)) = true
-  *    Stream(1,2,3).hasSubsequence(Stream(3,4,5)) = false
-  */
-  // def hasSubsequence[B >: A](s2: Stream[B]): Boolean =
+  @annotation.tailrec
+  final def drop(n: Int): Stream[A] = this match {
+    case Cons(_, t) if n > 0 => t().drop(n - 1)
+    case _ => this
+  }
+
+  def exists(p: A => Boolean): Boolean =
+    foldRight(false)((a, b) => p(a) || b) 
 
   /**
    * 与えられたストリームの要素で、自身のストリームが始まっているかを返す。
@@ -137,9 +138,39 @@ sealed trait Stream[+A] {
    */
   def startsWith[A](s: Stream[A]): Boolean =
     zipAll(s).takeWhile(!_._2.isEmpty) forAll {
-      case(h,h2) => h == h2
+      case (h, h2) => h == h2
     }
 
+  /**
+   * トラバース可能なコレクションの末端を反復処理します。最初の値は自身と同じトラバース可能なストリームであり、
+   * 最後の値は空のストリームです。その間の処理は補完された値となります。
+   *
+   * 例：Stream(1,2,3).tails -> Stream(Stream(1,2,3),Stream(2,3),Stream(3),Stream())
+   */
+  def tails: Stream[Stream[A]] =
+    unfold(this) {
+      case Empty => None
+      case s => Some((s, s drop 1))
+    } append Stream(empty)
+
+  /**
+   * 与えられたStreamを一部または全体として保持しているかどうかを返します。
+   * 例: Stream(1,2,3).hasSubsequence(Stream(1,2,3)) = true
+   *    Stream(1,2,3,4).hasSubsequence(Stream(2,3)) = true
+   *    Stream(1,2,3).hasSubsequence(Stream(3,4,5)) = false
+   *
+   * 動作手順：
+   * 1.tailsで、自身のストリームから比較用のストリームを作成
+   *     Stream(1,2,3).tails -> Stream(Stream(1,2,3),Stream(2,3),Stream(3),Stream())
+   * 2.existsで、比較用ストリームの中に、対象のストリームが存在するかを確認
+   *  2.1 existの引数に _ startsWith s2 とすることで、比較用ストリームの中でs2のストリームで始まるものがあるかを探索
+   *
+   * [MEMO]
+   * この動作は難しく見えるが、単にtailsによって、ストリームの初めの要素を無くしていって、
+   * それぞれのストリームの中に、与えられたストリームで始まるものがあるかを評価している。
+   */
+  def hasSubsequence[B >: A](s2: Stream[B]): Boolean =
+    tails exists (_ startsWith s2)
 }
 
 /**
