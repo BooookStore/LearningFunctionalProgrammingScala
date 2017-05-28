@@ -19,6 +19,9 @@ Learning Functional Programming Scala
 - **nonStrictFunction** <br>
 関数型プログラミングにおける遅延評価に関するコード
 
+- **purelyfunctionalstate** <br>
+状態を操作する純粋関数に関するコード
+
 ## How to build
 
 Simple Build Tool を利用してソースコードをコンパイルできます。コンパイル方法は以下のコマンドを入力します。
