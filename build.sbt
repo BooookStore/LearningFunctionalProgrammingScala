@@ -28,3 +28,9 @@ lazy val nonstrictfunction = (project in file("nonStrictFunction"))
   .settings(
     name := "nonstrictfunction"
   )
+
+lazy val purelyfunctionalstate = (project in file("purelyfunctionalstate "))
+  .settings(commonSettings)
+  .settings(
+    name := "purelyfunctionalstate "
+  )
