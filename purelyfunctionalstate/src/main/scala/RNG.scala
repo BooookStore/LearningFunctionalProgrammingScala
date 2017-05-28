@@ -31,3 +31,35 @@ case class SimpleRNG(seed: Long) extends RNG {
     (n, nextRNG)
   }
 }
+
+/**
+ * 乱数生成に関するユーティリティ
+ */
+object RandomUtil {
+
+  /**
+   * 乱数を２つ生成する。
+   */
+  def randomPair(rng: RNG) = {
+    val (i1, rng2) = rng.nextInt
+    val (i2, rng3) = rng2.nextInt
+    ((i1, i2), rng3)
+  }
+
+  /**
+   * 整数の乱数を生成する。
+   */
+  def nonNegativeInt(rng: RNG): (Int, RNG) = {
+    val (i, r) = rng.nextInt
+    (if (i < 0) -(i + 1) else i, r)
+  }
+
+  /**
+   * 0以上１未満の乱数をDouble値で生成する。
+   */
+  def double(rng: RNG): (Double, RNG) = {
+    val (i, r) = rng.nextInt
+    val i2 = i / Int.MaxValue.toDouble + 1
+    (i2, r)
+  }
+}
