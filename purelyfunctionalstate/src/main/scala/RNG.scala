@@ -129,8 +129,14 @@ object RandomUtil {
   def nonNegativeEven: Rand[Int] =
     map(nonNegativeInt)(i => i - i % 2)
 
+  /**
+   * double値の乱数を生成する関数において、mapを使用
+   */
   def doubleByMap(rng: RNG): (Double, RNG) = map(_.nextInt)(i => i / Int.MaxValue.toDouble + 1)(rng)
 
+  /**
+   * doubleByMapを更に改良したもの
+   */
   val _double: Rand[Double] =
     map(nonNegativeInt)(_ /(Int.MaxValue.toDouble + 1))
 }
