@@ -117,7 +117,7 @@ object RandomUtil {
       (f(a), rng2)
     }
 
-　/**
+  /**
    * 正の数で、偶数の乱数を生成する関数を、生成
    *
    * 使用例：
@@ -128,4 +128,9 @@ object RandomUtil {
    */
   def nonNegativeEven: Rand[Int] =
     map(nonNegativeInt)(i => i - i % 2)
+
+  def doubleByMap(rng: RNG): (Double, RNG) = map(_.nextInt)(i => i / Int.MaxValue.toDouble + 1)(rng)
+
+  val _double: Rand[Double] =
+    map(nonNegativeInt)(_ /(Int.MaxValue.toDouble + 1))
 }
