@@ -94,4 +94,38 @@ object RandomUtil {
     }
   }
 
+  // 関数を型として定義
+  type Rand[+A] = RNG => (A, RNG)
+
+  /**
+   * RNGから、乱数と、RNGを得る関数オブジェクト
+   */
+  val int: Rand[Int] = _.nextInt
+
+  /**
+   * a を初期のペアとする Rand[A] を生成する
+   */
+  def unit[A](a: A): Rand[A] =
+    rng => (a, rng)
+
+  /**
+   * Randのマップ関数。 s はマップ元の関数であり、 f によってマップ処理が行われる。
+   */
+  def map[A, B](s: Rand[A])(f: A => B): Rand[B] =
+    rng => {
+      val (a, rng2) = s(rng)
+      (f(a), rng2)
+    }
+
+　/**
+   * 正の数で、偶数の乱数を生成する関数を、生成
+   *
+   * 使用例：
+   * val (i, r) = nonNegativeEvenGenerator(SimpleRNG(1))
+   *
+   *   i: Int = 384748
+   *   r: RNG = SimpleRNG(25214903928)
+   */
+  def nonNegativeEven: Rand[Int] =
+    map(nonNegativeInt)(i => i - i % 2)
 }
