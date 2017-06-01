@@ -149,4 +149,27 @@ object RandomUtil {
       val(i2, r2) = rb(r1)
       (f(i1, i2), r2)
   }
+
+  /**
+   * 乱数を２回生成し、タプル値として返すRandを生成
+   * 乱数を生成するために、RNGに対して何をするかを、ra,rbによって決定する
+   *
+   * 使用例：
+   * val intPair = both(_.nextInt, _.nextInt)
+   * val (i1, i2) = intPair(SimpleRNG(1234))
+   */
+  def both[A,B](ra: Rand[A], rb: Rand[B]): Rand[(A, B)] =
+    map2(ra,rb)((_, _))
+
+  /**
+   * IntとDoubleの乱数をタプル値として返す
+   */
+  val randIntDouble: Rand[(Int, Double)] =
+    both(int, double)
+
+  /**
+   * DoubleとIntの乱数をタプル値として返す
+   */
+  val randDoubleInt: Rand[(Double, Int)] =
+    both(double, int)
 }
