@@ -139,4 +139,14 @@ object RandomUtil {
    */
   val _double: Rand[Double] =
     map(nonNegativeInt)(_ /(Int.MaxValue.toDouble + 1))
+
+  /**
+   * ra と　rb の結果を f によてマップするRandを生成
+   */
+  def map2[A,B,C](ra: Rand[A], rb: Rand[B])(f: (A, B) => C): Rand[C] =
+    rng => {
+      val(i1, r1) = ra(rng)
+      val(i2, r2) = rb(r1)
+      (f(i1, i2), r2)
+  }
 }
