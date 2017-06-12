@@ -138,17 +138,17 @@ object RandomUtil {
    * doubleByMapを更に改良したもの
    */
   val _double: Rand[Double] =
-    map(nonNegativeInt)(_ /(Int.MaxValue.toDouble + 1))
+    map(nonNegativeInt)(_ / (Int.MaxValue.toDouble + 1))
 
   /**
    * ra と　rb の結果を f によてマップするRandを生成
    */
-  def map2[A,B,C](ra: Rand[A], rb: Rand[B])(f: (A, B) => C): Rand[C] =
+  def map2[A, B, C](ra: Rand[A], rb: Rand[B])(f: (A, B) => C): Rand[C] =
     rng => {
-      val(i1, r1) = ra(rng)
-      val(i2, r2) = rb(r1)
+      val (i1, r1) = ra(rng)
+      val (i2, r2) = rb(r1)
       (f(i1, i2), r2)
-  }
+    }
 
   /**
    * 乱数を２回生成し、タプル値として返すRandを生成
@@ -158,8 +158,8 @@ object RandomUtil {
    * val intPair = both(_.nextInt, _.nextInt)
    * val (i1, i2) = intPair(SimpleRNG(1234))
    */
-  def both[A,B](ra: Rand[A], rb: Rand[B]): Rand[(A, B)] =
-    map2(ra,rb)((_, _))
+  def both[A, B](ra: Rand[A], rb: Rand[B]): Rand[(A, B)] =
+    map2(ra, rb)((_, _))
 
   /**
    * IntとDoubleの乱数をタプル値として返す
@@ -172,4 +172,36 @@ object RandomUtil {
    */
   val randDoubleInt: Rand[(Double, Int)] =
     both(double, int)
+
+  /**
+   * 非負数の、 n 以下の乱数を返す
+   */
+  def nonNegativeLessThan(n: Int): Rand[Int] = { rng =>
+    val (i, rng2) = nonNegativeInt(rng)
+    val mod = i % n
+    if (i + (n - 1) - mod >= 0)
+      (mod, rng2)
+    else nonNegativeLessThan(n)(rng)
+  }
+
+  /**
+   * Rand[A] から、 Rand[B] へ変換するマップ関数です。
+   * 変換は g によって行われます。
+   */
+  def flatMap[A, B](f: Rand[A])(g: A => Rand[B]): Rand[B] =
+    rng => {
+      val (a, r1) = f(rng)
+      g(a)(r1)
+    }
+
+  /**
+   * flatMap を使用して、非負数の乱数を生成するRandを返す
+   */
+  def nonNegativeLessThanByFlatMap(n: Int): Rand[Int] = {
+    flatMap(nonNegativeInt) { i =>
+      val mod = i % n
+      if (i + (n - 1) - mod >= 0) unit(mod) else nonNegativeLessThanByFlatMap(n)
+    }
+  }
+
 }
