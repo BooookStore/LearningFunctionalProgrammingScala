@@ -1,3 +1,6 @@
+import rng._
+import rng.RandomUtil._
+
 object RNGScenario extends App {
 
   {
@@ -19,5 +22,11 @@ object RNGScenario extends App {
 
     val (r1, n2) = RandomUtil.flatMap(RandomUtil.nonNegativeEven)(RandomUtil.unit(_))(SimpleRNG(5))
     println(s"($r1)")
+  }
+  {
+    // nonNegativeIntを使用してサイコロを作成してみる。
+    def rollDie: Rand[Int] = map(nonNegativeLessThan(6)) (_ + 1)
+    val ri = rollDie(SimpleRNG(123))._1
+    println(s"roll die ($ri)")
   }
 }

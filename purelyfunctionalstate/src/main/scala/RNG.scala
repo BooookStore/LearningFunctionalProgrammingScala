@@ -1,3 +1,5 @@
+package rng
+
 /**
  * Random Number Generator
  * 乱数生成のインターフェースを定義
@@ -172,6 +174,15 @@ object RandomUtil {
    */
   val randDoubleInt: Rand[(Double, Int)] =
     both(double, int)
+
+  /**
+   * sequence の fold において、基礎が unit の List[A] を返す Rand[List[A]]
+   * になっている。よって、 acc は Rand[List[A]] であり、 f は Rand[A] の型である。
+   * よって、 map2(f, acc)(_ :: _) では f と acc の中身（A,List[A])を取り出し、
+   * ひとつの Rand[List[A]] へと変換している。
+   */
+  def sequence[A](fs: List[Rand[A]]): Rand[List[A]] =
+    fs.foldRight(unit(List[A]()))((f, acc) => map2(f, acc)(_ :: _))
 
   /**
    * 非負数の、 n 以下の乱数を返す
