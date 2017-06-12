@@ -196,9 +196,16 @@ object RandomUtil {
 
   /**
    * flatMap を使用して、非負数の乱数を生成するRandを返す
+   *
+   * MEMO :
+   * 実装が非常に分かりづらかったので、まとめておく。
+   *
+   * nonNegativeInt　は　RNG => (Int, RNG) のシグネチャなので、
+   * nonNegativeInt は　Rand[Int] 型の関数である。
+   * よって、nonNegativeInt は flatMap の第一引数に与えることができる。
    */
   def nonNegativeLessThanByFlatMap(n: Int): Rand[Int] = {
-    flatMap(nonNegativeInt) { i =>
+    flatMap(nonNegativeInt /* RNG => (Int, RNG) 型 */ ) { i =>
       val mod = i % n
       if (i + (n - 1) - mod >= 0) unit(mod) else nonNegativeLessThanByFlatMap(n)
     }
