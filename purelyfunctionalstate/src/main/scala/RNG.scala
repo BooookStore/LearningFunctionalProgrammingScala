@@ -203,6 +203,13 @@ object RandomUtil {
    * nonNegativeInt　は　RNG => (Int, RNG) のシグネチャなので、
    * nonNegativeInt は　Rand[Int] 型の関数である。
    * よって、nonNegativeInt は flatMap の第一引数に与えることができる。
+   *
+   * { ... } の中身は Int => Rand[Int] の型の中身である。
+   * つまり、 i は Int 型で unit(mode) は Rand[Int] である。
+   * else の後に再帰呼出しを行っているが再帰呼出しの戻り値も Rand[Int] のため、呼び出せる。
+   *
+   * if(...) で何を行っているかは最後までよくわかっていないが、関数型プログラミングの考え方を学ぶ上では
+   * 重要ではないため、完全に理解する必要はないと思う。
    */
   def nonNegativeLessThanByFlatMap(n: Int): Rand[Int] = {
     flatMap(nonNegativeInt /* RNG => (Int, RNG) 型 */ ) { i =>
