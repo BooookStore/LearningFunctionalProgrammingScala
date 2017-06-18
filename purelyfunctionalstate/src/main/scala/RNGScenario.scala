@@ -29,4 +29,19 @@ object RNGScenario extends App {
     val ri = rollDie(SimpleRNG(123))._1
     println(s"roll die ($ri)")
   }
+  {
+    // sequenceを使ってみる。
+    val rands = nonNegativeInt _ :: nonNegativeInt _ :: nonNegativeInt _ :: Nil
+    val rands_conv = sequence(rands)
+
+    val (rl, ne) = rands_conv(SimpleRNG(123))
+    rl.foreach(i => print(i + "."))
+  }
+  {
+    // Stateケースクラスを使ってみる。
+
+    // flatMapメソッドをコール
+    val s1 = State(nonNegativeLessThan(10))
+    s1.flatMap(i => {})
+  }
 }

@@ -241,3 +241,23 @@ object RandomUtil {
   def _map2[A, B, C](ra: Rand[A], rb: Rand[B])(f: (A, B) => C): Rand[C] =
     flatMap(ra)(a => _map(rb)(b => f(a, b)))
 }
+
+import State._
+
+/**
+ * 状態Sが入力され、(A, S)を返す関数オブジェクトで初期化する。
+ */
+case class State[S, +A](run: S => (A, S)) {
+  def map[B](f: A => B): State[S, B] =
+    flatMap(a => unit(f(a)))
+  def map2[B, C](sb: State[S, B])(f: (A, B) => C): State[S, C] =
+    flatMap(a => sb.map(b => f(a, b)))
+  def flatMap[B](f: A => State[S, B]): State[S, B] = State(s => {
+    val (a, s1) = run(s)
+    f(a).run(s1)
+  })
+}
+
+object State {
+  type Rand[A] = State[RNG, A]
+}
