@@ -22,6 +22,15 @@ Learning Functional Programming Scala
 - **purelyfunctionalstate** <br>
 状態を操作する純粋関数に関するコード
 
+- **purelyFunctionalParallelism** <br>
+　作成中
+
+- **PropetyBasedTesting** <br>
+　作成中
+
+- **ParserCombinators** <br>
+　作成中
+
 ## How to build
 
 Simple Build Tool を利用してソースコードをコンパイルできます。コンパイル方法は以下のコマンドを入力します。
