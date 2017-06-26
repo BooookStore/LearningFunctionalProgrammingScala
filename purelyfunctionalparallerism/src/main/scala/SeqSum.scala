@@ -15,7 +15,7 @@ object SeqSum {
       ints.headOption getOrElse 0 // headOptionはcollectionすべてが実装している。
     else {
       val (l,r) = ints.splitAt(ints.length/2) // リストを２つに分割する。
-      sum(l) + sum(r) // ２分割したリストから再帰的に関数を呼び出し、計算結果を返す。
+      sum_second(l) + sum_second(r) // ２分割したリストから再帰的に関数を呼び出し、計算結果を返す。
     }
 
 }
