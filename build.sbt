@@ -34,3 +34,9 @@ lazy val purelyfunctionalstate = (project in file("purelyfunctionalstate"))
   .settings(
     name := "purelyfunctionalstate"
   )
+
+lazy val purelyfunctionalparallerism = (project in file("purelyfunctionalparallerism"))
+  .settings(commonSettings)
+  .settings(
+    name := "purelyfunctionalparallerism"
+  )
