@@ -18,4 +18,20 @@ object SeqSum {
       sum_second(l) + sum_second(r) // ２分割したリストから再帰的に関数を呼び出し、計算結果を返す。
     }
 
+  // 実装その３
+  // 並列実行で計算を行う。
+  def sum(ints: IndexedSeq[Int]): Int =
+    if(ints.size <= 1)
+      ints headOption getOrElse 0
+    else {
+      val (l, r) = ints.splitAt(ints.length/2)
+      val sumL: Par[Int] = Par.unit(sum(l)) // 左半分の計算を並列計算
+      val sumR: Par[Int] = Par.unit(sum(r)) // 右半分の計算を並列計算
+      Par.get(sumL) + Par.get(sumR) // 両方の計算結果を取り出して足す
+    }
+}
+
+
+object Par {
+
 }
