@@ -31,11 +31,15 @@ object SeqSum {
    * 2. def get[A](a: Par[A]): A
    *    Parが保持しているAを取得する。
    *
+   * 3. def map2[A, B, C](a: Par[A], b: Par[B])((A,B) => C): Par[C]
+   *    マップ関数
+   *
    */
 
   // 実装その３
   // 並列実行で計算を行う。
-  def sum(ints: IndexedSeq[Int]): Int =
+  // 上記で想定しているParを使用すれば、以下のように並列処理を行うことが可能になる。
+  def sum(ints: IndexedSeq[Int]): Par[Int] =
     if(ints.size <= 1)
       Par.unit(ints.headOption getOrElse 0)
     else {
