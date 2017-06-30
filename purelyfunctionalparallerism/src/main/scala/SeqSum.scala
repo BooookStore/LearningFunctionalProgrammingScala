@@ -18,20 +18,28 @@ object SeqSum {
       sum_second(l) + sum_second(r) // ２分割したリストから再帰的に関数を呼び出し、計算結果を返す。
     }
 
+  // 並列処理を行った結果のデータを格納する型が必要だと推測できる。
+  // なぜなら、並列処理をした結果のデータ型は様々であるためである。
+
+  /*
+   * Parという型を想定する。これは、Parallelの略称である。
+   * 以下の関数を持たせる。
+   *
+   * 1. def unit[A](a: => A): Par[A]
+   *    未評価のAを受け取り、クライアント側と異なるスレッドで値を評価する。
+   *
+   * 2. def get[A](a: Par[A]): A
+   *    Parが保持しているAを取得する。
+   *
+   */
+
   // 実装その３
   // 並列実行で計算を行う。
   def sum(ints: IndexedSeq[Int]): Int =
     if(ints.size <= 1)
-      ints.headOption getOrElse 0
+      Par.unit(ints.headOption getOrElse 0)
     else {
       val (l, r) = ints.splitAt(ints.length/2)
-      val sumL: Par[Int] = Par.unit(sum(l)) // 左半分の計算を並列計算
-      val sumR: Par[Int] = Par.unit(sum(r)) // 右半分の計算を並列計算
-      Par.get(sumL) + Par.get(sumR) // 両方の計算結果を取り出して足す
+      Par.map2(sum(l), sum(r))(_ + _)
     }
-}
-
-
-object Par {
-
 }
