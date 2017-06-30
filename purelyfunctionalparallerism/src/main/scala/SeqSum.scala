@@ -22,7 +22,7 @@ object SeqSum {
   // 並列実行で計算を行う。
   def sum(ints: IndexedSeq[Int]): Int =
     if(ints.size <= 1)
-      ints headOption getOrElse 0
+      ints.headOption getOrElse 0
     else {
       val (l, r) = ints.splitAt(ints.length/2)
       val sumL: Par[Int] = Par.unit(sum(l)) // 左半分の計算を並列計算
