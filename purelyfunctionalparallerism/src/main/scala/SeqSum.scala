@@ -33,12 +33,24 @@ object SeqSum {
    *
    * 3. def map2[A, B, C](a: Par[A], b: Par[B])((A,B) => C): Par[C]
    *    マップ関数
-   *
    */
 
   // 実装その３
   // 並列実行で計算を行う。
   // 上記で想定しているParを使用すれば、以下のように並列処理を行うことが可能になる。
+  def sum_with_Par_get(ints: IndexedSeq[Int]): Int =
+    if(ints.size <= 1)
+      ints.headOption getOrElse 0
+    else {
+      val (l, r) = ints.splitAt(ints.length/2)
+      val sumL: Par[Int] = Par.unit(sum(l)) // 左半分を並列処理
+      val sumR: Par[Int] = Par.unit(sum(r)) // 右半分を並列処理
+      Par.get(sumL) + Par.get(sumR)
+    }
+
+  //
+
+  // 実装その４
   def sum(ints: IndexedSeq[Int]): Par[Int] =
     if(ints.size <= 1)
       Par.unit(ints.headOption getOrElse 0)
@@ -46,4 +58,7 @@ object SeqSum {
       val (l, r) = ints.splitAt(ints.length/2)
       Par.map2(sum(l), sum(r))(_ + _)
     }
+
+    // 実装その４では、Parが並列処理の機能を提供したとしても意味がない。
+    // なぜならScalaは左から右へと引数を評価していくからです。
 }
